@@ -1,4 +1,3 @@
-import { prisma } from '@/prisma'
 import { registerUseCase } from '@/use-cases/register'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
