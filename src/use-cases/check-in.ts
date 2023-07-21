@@ -22,7 +22,7 @@ export class CheckInUseCase {
       new Date(),
     )
 
-    if (checkInOnSameDate) throw new Error('User already checked in today')
+    if (checkInOnSameDate) throw new Error()
 
     const checkIn = await this.checkInsRepository.create({
       gym_id: gymId,
