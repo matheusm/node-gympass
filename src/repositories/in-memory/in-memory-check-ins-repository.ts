@@ -2,18 +2,24 @@ import { Prisma, CheckIn } from '@prisma/client'
 import { CheckInsRepository } from '../check-ins-repository'
 import { randomUUID } from 'node:crypto'
 import dayjs from 'dayjs'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 export class InMemoryCheckInsRepository implements CheckInsRepository {
   public items: CheckIn[] = []
 
   async findByUserIdOnDate(userId: string, date: Date) {
+    dayjs.extend(isSameOrAfter)
     const startOfTheDay = dayjs(date).startOf('date')
     const endOfTheDay = dayjs(date).endOf('date')
+
+    console.log(startOfTheDay)
+    console.log(endOfTheDay)
 
     const checkInOnSameDate = this.items.find((checkIn) => {
       const checkInDate = dayjs(checkIn.created_at)
       const isOnSameDate =
-        checkInDate.isAfter(startOfTheDay) && checkInDate.isBefore(endOfTheDay)
+        checkInDate.isSameOrAfter(startOfTheDay) &&
+        checkInDate.isBefore(endOfTheDay)
 
       return checkIn.user_id === userId && isOnSameDate
     })

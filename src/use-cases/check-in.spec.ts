@@ -34,6 +34,8 @@ describe('CheckIns Use Case', () => {
       userId: 'user-01',
     })
 
+    vi.setSystemTime(new Date(2022, 0, 20, 2, 0, 0))
+
     await expect(() =>
       sut.execute({
         gymId: 'gym-01',
