@@ -7,6 +7,10 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 export class InMemoryCheckInsRepository implements CheckInsRepository {
   public items: CheckIn[] = []
 
+  async countByUserId(userId: string): Promise<number> {
+    return this.items.filter((items) => items.user_id === userId).length
+  }
+
   async findByUserIdOnDate(userId: string, date: Date) {
     dayjs.extend(isSameOrAfter)
     const startOfTheDay = dayjs(date).startOf('date')
