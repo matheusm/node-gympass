@@ -2,24 +2,25 @@ import { expect, describe, it, beforeEach, vi, afterEach } from 'vitest'
 import { CheckInUseCase } from './check-in'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
-import { Decimal } from '@prisma/client/runtime/library'
+import { MaxNumberOfCheckInsError } from './errors/max-number-of-check-ins-error'
+import { MaxDistanceError } from './errors/max-distance-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
 describe('CheckIns Use Case', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'top',
       description: 'Javascript',
-      latitude: new Decimal(-9.6354976),
-      longitude: new Decimal(-35.7079223),
+      latitude: -9.6354976,
+      longitude: -35.7079223,
       phone: '',
     })
 
@@ -60,7 +61,7 @@ describe('CheckIns Use Case', () => {
         userLatitude: -9.6354976,
         userLongitude: -35.7079223,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
   })
 
   it('should be able to check in twice but in different days', async () => {
@@ -86,12 +87,12 @@ describe('CheckIns Use Case', () => {
   })
 
   it('should be not able to check in on distant gym', async () => {
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-02',
       title: 'top',
       description: 'Javascript',
-      latitude: new Decimal(-9.5690645),
-      longitude: new Decimal(-35.646768),
+      latitude: -9.5690645,
+      longitude: -35.646768,
       phone: '',
     })
 
@@ -102,6 +103,6 @@ describe('CheckIns Use Case', () => {
         userLatitude: -9.6354976,
         userLongitude: -35.7079223,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })
