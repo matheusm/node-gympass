@@ -4,7 +4,6 @@ export interface FindManyNearByParams {
   latitude: number
   longitude: number
   page: number
-  perPage: number
 }
 
 export interface GymsRepository {
